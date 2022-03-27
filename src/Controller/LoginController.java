@@ -3,6 +3,7 @@ package Controller;
 import Model.ACCESS;
 import Model.Admin;
 import Model.Customer;
+import Model.User;
 
 public class LoginController {
 
@@ -27,6 +28,17 @@ public class LoginController {
             return "wrong access level";
         }
         Admin admin = new Admin(username, password, accessModifier);
+        return "done";
+    }
+
+    public String login(String username, String password) {
+        User user = Admin.getAdminByUsername(username);
+        if (user == null) {
+            user = Customer.getCustomerByUsername(username);
+            if (user == null) return "Wrong Credentials !";
+        } else {
+            if (!user.getPassword().equals(password)) return "Wrong Credentials !";
+        }
         return "done";
     }
 

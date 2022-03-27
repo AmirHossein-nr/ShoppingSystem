@@ -25,17 +25,40 @@ public class LoginMenu extends Menu {
         System.out.println("1. register");
         System.out.println("2. login");
 
+        label:
         while (true) {
             String input = this.getScanner().nextLine().trim().toLowerCase();
-            if (input.equals("register") || input.equals("1")) {
-                register();
-                this.run();
-            } else if (input.equals("login") || input.equals("2")) {
-
-            } else {
-                System.out.println("Invalid Input. Please Try Again ...");
+            switch (input) {
+                case "register":
+                case "1":
+                    register();
+                    this.run();
+                    break;
+                case "login":
+                case "2":
+                    login();
+                    break;
+                case "end":
+                    break label;
+                default:
+                    System.out.println("Invalid Input. Please Try Again ...");
+                    break;
             }
         }
+
+    }
+
+    private void login() {
+        System.out.println("username: ");
+        String username = getScanner().nextLine().trim();
+        System.out.println("password: ");
+        String password = getScanner().nextLine().trim();
+        String validate = controller.login(username, password);
+        if (validate.equalsIgnoreCase("done")) {
+            System.out.println("Logged in Successfully!");
+            return;
+        }
+        System.out.println(validate);
     }
 
     private void register() {

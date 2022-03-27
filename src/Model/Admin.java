@@ -26,6 +26,13 @@ public class Admin extends User {
         return allAdmins;
     }
 
+    public static Admin getAdminByUsername(String username) {
+        for (Admin admin : Admin.getAllAdmins()) {
+            if (admin.getUsername().equals(username)) return admin;
+        }
+        return null;
+    }
+
     public String getPersonalUnifiedId() {
         return personalUnifiedId;
     }
