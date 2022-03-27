@@ -50,7 +50,6 @@ public class LoginMenu extends Menu {
                     String password = getScanner().next().trim();
                     System.out.println("repeat password: ");
                     String repeatPassword = getScanner().next().trim();
-
                 } else {
                     System.out.println("Invalid Choice! Please Try Again ...");
                 }
