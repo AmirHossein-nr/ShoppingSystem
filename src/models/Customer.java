@@ -1,29 +1,22 @@
-package Model;
+package models;
 
 import java.util.ArrayList;
 
 public class Customer extends User {
 
-    private static ArrayList<Customer> allCustomers;
-    private ArrayList<String> accountNumbers;
+    private final static ArrayList<Customer> ALL_CUSTOMERS = new ArrayList<>();
+    private final ArrayList<String> accountNumbers;
     private int accountCredit;
 
-    static {
-        allCustomers = new ArrayList<>();
-    }
-
-    public Customer(String username, String Password) {
-        super();
+    public Customer(String username, String password) {
+        super(username, password);
         this.accountNumbers = new ArrayList<>();
         this.accountCredit = 0;
-        this.setUsername(username);
-        this.setPassword(password);
-        allCustomers.add(this);
+        Customer.ALL_CUSTOMERS.add(this);
     }
 
-
     public static ArrayList<Customer> getAllCustomers() {
-        return allCustomers;
+        return Customer.ALL_CUSTOMERS;
     }
 
     public ArrayList<String> getAccountNumbers() {
@@ -31,8 +24,9 @@ public class Customer extends User {
     }
 
     public static Customer getCustomerByUsername(String username) {
-        for (Customer customer : allCustomers) {
-            if (customer.getUsername().equals(username)) return customer;
+        for (Customer customer : Customer.ALL_CUSTOMERS) {
+            if (customer.getUsername().equals(username))
+                return customer;
         }
         return null;
     }

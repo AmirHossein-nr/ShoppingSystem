@@ -1,34 +1,31 @@
-package Model;
+package models;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
+import enums.ACCESS;
+
 public class Admin extends User {
 
-    private static ArrayList<Admin> allAdmins;
+    private static final ArrayList<Admin> ALL_ADMINS = new ArrayList<>();
     private final String personalUnifiedId;
     private ACCESS accessLevel;
 
-    static {
-        allAdmins = new ArrayList<>();
-    }
-
     public Admin(String username, String password, ACCESS accessLevel) {
-        super();
-        this.setUsername(username);
-        this.setPassword(password);
+        super(username, password);
         this.personalUnifiedId = UUID.randomUUID().toString();
         this.accessLevel = accessLevel;
-        allAdmins.add(this);
+        Admin.ALL_ADMINS.add(this);
     }
 
     public static ArrayList<Admin> getAllAdmins() {
-        return allAdmins;
+        return Admin.ALL_ADMINS;
     }
 
     public static Admin getAdminByUsername(String username) {
         for (Admin admin : Admin.getAllAdmins()) {
-            if (admin.getUsername().equals(username)) return admin;
+            if (admin.getUsername().equals(username))
+                return admin;
         }
         return null;
     }
