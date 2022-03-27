@@ -28,36 +28,50 @@ public class LoginMenu extends Menu {
         while (true) {
             String input = this.getScanner().nextLine().trim().toLowerCase();
             if (input.equals("register") || input.equals("1")) {
-                System.out.println("Now, please enter \"admin\" or \"customer\" for specific registration: ");
-                String choice = this.getScanner().nextLine().trim().toLowerCase();
-                if (choice.equals("customer")) {
-                    System.out.println("username: ");
-                    String username = getScanner().next().trim();
-                    System.out.println("Password: ");
-                    String password = getScanner().next().trim();
-                    System.out.println("Repeat Password: ");
-                    String repeatPassword = getScanner().next().trim();
-                    String validate = controller.canRegister(username, password, repeatPassword);
-                    if (!validate.equals("done")) {
-                        System.out.println(validate);
-                        continue;
-                    }
-                    System.out.println("Customer Created Successfully!");
-                } else if (choice.equals("admin")) {
-                    System.out.println("username: ");
-                    String username = getScanner().next().trim();
-                    System.out.println("Password: ");
-                    String password = getScanner().next().trim();
-                    System.out.println("repeat password: ");
-                    String repeatPassword = getScanner().next().trim();
-                } else {
-                    System.out.println("Invalid Choice! Please Try Again ...");
-                }
+                register();
+                this.run();
             } else if (input.equals("login") || input.equals("2")) {
 
             } else {
                 System.out.println("Invalid Input. Please Try Again ...");
             }
+        }
+    }
+
+    private void register() {
+        System.out.println("Now, please enter \"admin\" or \"customer\" for specific registration: ");
+        String choice = this.getScanner().nextLine().trim().toLowerCase();
+        if (choice.equals("customer")) {
+            System.out.println("username: ");
+            String username = getScanner().next().trim();
+            System.out.println("Password: ");
+            String password = getScanner().next().trim();
+            System.out.println("Repeat Password: ");
+            String repeatPassword = getScanner().next().trim();
+            String validate = controller.canRegister(username, password, repeatPassword);
+            if (!validate.equals("done")) {
+                System.out.println(validate);
+                return;
+            }
+            System.out.println("Customer Created Successfully!");
+        } else if (choice.equals("admin")) {
+            System.out.println("username: ");
+            String username = getScanner().next().trim();
+            System.out.println("Password: ");
+            String password = getScanner().next().trim();
+            System.out.println("repeat password: ");
+            String repeatPassword = getScanner().next().trim();
+            System.out.println("Enter Access Level of this user: (CEO/MANAGER/ACCOUNTANT/SIMPLE");
+            String access = getScanner().next().trim();
+            String validate = controller.createAdmin(username, password, repeatPassword, access);
+            if (!validate.equals("done")) {
+                System.out.println(validate);
+                return;
+            }
+
+            System.out.println("admin created Successfully!");
+        } else {
+            System.out.println("Invalid Choice! Please Try Again ...");
         }
     }
 }

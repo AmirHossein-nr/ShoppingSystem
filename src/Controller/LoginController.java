@@ -1,5 +1,7 @@
 package Controller;
 
+import Model.ACCESS;
+import Model.Admin;
 import Model.Customer;
 
 public class LoginController {
@@ -9,6 +11,22 @@ public class LoginController {
         String error = validatePassword(password, repeatPassword);
         if (!error.equals("OK")) return error;
         Customer customer = new Customer(username, password);
+        return "done";
+    }
+
+    public String createAdmin(String username, String password, String repeatPassword, String accessLevel) {
+        if (isCustomerFound(username)) return "repeated username";
+        String error = validatePassword(password, repeatPassword);
+        if (!error.equals("OK")) return error;
+        ACCESS accessModifier;
+        if (accessLevel.equalsIgnoreCase("ceo")) accessModifier = ACCESS.CEO;
+        else if (accessLevel.equalsIgnoreCase("manager")) accessModifier = ACCESS.MANAGER;
+        else if (accessLevel.equalsIgnoreCase("accountant")) accessModifier = ACCESS.ACCOUNTANT;
+        else if (accessLevel.equalsIgnoreCase("simple")) accessModifier = ACCESS.SIMPLE;
+        else {
+            return "wrong access level";
+        }
+        Admin admin = new Admin(username, password, accessModifier);
         return "done";
     }
 
