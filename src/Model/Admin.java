@@ -9,7 +9,7 @@ public class Admin extends User {
     private final String personalUnifiedId;
     private ACCESS accessLevel;
 
-    {
+    static {
         allAdmins = new ArrayList<>();
     }
 

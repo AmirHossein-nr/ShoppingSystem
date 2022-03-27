@@ -8,7 +8,7 @@ public class Customer extends User {
     private ArrayList<String> accountNumbers;
     private int accountCredit;
 
-    {
+    static {
         allCustomers = new ArrayList<>();
     }
 
