@@ -62,4 +62,16 @@ public abstract class Sellable {
     public void setComments(ArrayList<Comment> comments) {
         this.comments = comments;
     }
+
+    public static Sellable getSellableByName(String name) {
+        for (Sellable sellable : allItems) {
+            if (sellable.getName().equals(name)) return sellable;
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "name: " + this.getName() + " | price: " + this.getPrice() + " | id: " + this.getId();
+    }
 }

@@ -17,4 +17,5 @@ public class Product extends Sellable {
     public String getDescription() {
         return description;
     }
+
 }
