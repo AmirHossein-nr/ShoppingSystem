@@ -1,28 +1,30 @@
 package views;
 
-import java.util.Scanner;
-
 import controllers.MainController;
-import enums.Messages;
+import enums.Message;
+import models.Admin;
 import models.Customer;
-import models.Product;
 import models.Sellable;
 import models.User;
 
 public class MainMenu extends Menu {
+    // Singleton Pattern
     private static MainMenu instance = null;
 
     private MainController controller;
 
+    // Singleton Pattern
     private MainMenu() {
         super("main menu");
         this.controller = MainController.getInstance();
     }
 
+    // Singleton Pattern
     private static void setInstance(MainMenu instance) {
         MainMenu.instance = instance;
     }
 
+    // Singleton Pattern
     public static MainMenu getInstance() {
         if (MainMenu.instance == null) {
             MainMenu.setInstance(new MainMenu());
@@ -31,108 +33,112 @@ public class MainMenu extends Menu {
     }
 
     @Override
-    protected void showOptions() {
-        User loggedInUser = Menu.getLoggedInUser();
-        System.out.println("Hello " + loggedInUser.getUsername() + " !");
-        System.out.println("Please Enter one of the choices below: ");
-        int logoutOptionNumber = 0;
-        if (loggedInUser instanceof Customer) {
-            System.out.println("1. See All of Products and Services");
-            System.out.println("2. Send Message to Support");
-            logoutOptionNumber = 3;
-        } else { // Admin
-            System.out.println("1. See All of Products and Services");
-            System.out.println("2. Add a new Product");
-            System.out.println("3. Edit existing product");
-            logoutOptionNumber = 4;
-        }
-        System.out.println(String.format("%d. logout", logoutOptionNumber));
+    public void run() {
+        this.showOptions();
 
-    }
+        String choice = this.getChoice();
 
-    private void handleCustomerChoice() {
-        String choice = MainMenu.getScanner().nextLine().trim();
-
-        if (choice.equals("1")) {
-            this.printAllProducts();
-            this.run();
-
-        } else if (choice.equals("2")) {
-            this.sendMessage();
-            this.run();
-
-        } else if (choice.equals("3")) {
-            this.logout();
-        } else {
-            System.out.println(Messages.INVALID_CHOICE);
-            this.run();
-        }
-
-    }
-
-    private void logout() {
-        Menu.setLoggedInUser(null);
-        LoginMenu.getInstance().run();
-    }
-
-    private void addNewProduct() {
-        Scanner scanner = MainMenu.getScanner();
-        System.out.println("now, enter the information below: ");
-        System.out.println("Product name : ");
-        String name = scanner.nextLine().trim();
-        System.out.println("Product Price");
-        float price = scanner.nextFloat();
-        String validate = this.controller.createProduct(name, price);
-        if (!validate.equals("done")) {
-            System.out.println(validate);
-            this.run();
-        }
-        System.out.println("Product Created Successfully ! Here is the information : ");
-        System.out.println(Product.getSellableByName(name)); // why using model methods in view?
-    }
-
-    private void editProduct() {
-        // todo: edit product
-    }
-
-    private void handleAdminChoice() {
-        String choice = MainMenu.getScanner().nextLine().trim();
-
-        if (choice.equals("1")) {
-            this.printAllProducts();
-            this.run();
-        } else if (choice.equals("2")) {
-            this.addNewProduct();
-            this.run();
-        } else if (choice.equals("3")) {
-            this.editProduct();
-            this.run();
-        } else if (choice.equals("4")) {
-            this.logout();
-        } else {
-            System.out.println(Messages.INVALID_CHOICE);
-            this.run();
+        if (Menu.getLoggedInUser() instanceof Customer) {
+            this.handleCustomerChoice(choice);
+        } else if (Menu.getLoggedInUser() instanceof Admin) {
+            this.handleAdminChoice(choice);
         }
     }
 
     @Override
-    public void run() {
-        this.showOptions();
-        if (getLoggedInUser() instanceof Customer) {
-            this.handleCustomerChoice();
+    protected void showOptions() {
+        User loggedInUser = Menu.getLoggedInUser();
+        System.out.println("Hello " + loggedInUser.getUsername() + "!");
+        System.out.println("Please Enter one of the choices below:");
+        System.out.println("1. Profile");
+        System.out.println("2. See All products");
+        if (loggedInUser instanceof Customer) {
+            System.out.println("3. Buy a product");
+            System.out.println("4. increase balance");
+            System.out.println("5. logout");
+
+        } else if (loggedInUser instanceof Admin) {
+            System.out.println("3. Add new product");
+            System.out.println("4. logout");
+        }
+
+    }
+
+    private void handleCustomerChoice(String choice) {
+        if (choice.equals("1")) {
+            this.showProfile();
+        } else if (choice.equals("2")) {
+            this.printAllProducts();
+
+        } else if (choice.equals("3")) {
+            this.buyProduct();
+
+        } else if (choice.equals("4")) {
+            this.increaseBalance();
+        } else if (choice.equals("5")) {
+            this.logout();
         } else {
-            this.handleAdminChoice();
+            System.out.println(Message.INVALID_CHOICE);
+            this.run();
+        }
+
+    }
+
+    private void increaseBalance() {
+        int amount = Integer.parseInt(this.getInput("amount"));
+        Message message = this.controller.handleIncreaseBalance((Customer) Menu.getLoggedInUser(), amount);
+        System.out.println(message == Message.SUCCESS ? "increased" : message);
+        this.run();
+    }
+
+    private void buyProduct() {
+        int sellableId = Integer.parseInt(getInput("Enter product id"));
+        Message message = this.controller.handleBuyProduct((Customer) Menu.getLoggedInUser(), sellableId); // downCasting
+        System.out.println(message == Message.SUCCESS ? "Product purchased Successfully" : message);
+        this.run();
+    }
+
+    private void handleAdminChoice(String choice) {
+        if (choice.equals("1")) {
+            this.showProfile();
+        } else if (choice.equals("2")) {
+            this.printAllProducts();
+
+        } else if (choice.equals("3")) {
+            this.addNewProduct();
+        } else if (choice.equals("4")) {
+            this.logout();
+        } else {
+            System.out.println(Message.INVALID_CHOICE);
+            this.run();
         }
     }
 
-    private void sendMessage() {
-        // todo: send message
+    private void showProfile() {
+    }
+
+    private void logout() {
+        Menu.setLoggedInUser(null);
+    }
+
+    private void addNewProduct() {
+
+        System.out.println("now, enter the information below: ");
+
+        String name = this.getInput("Product name");
+        int price = Integer.parseInt(this.getInput("Product price"));
+        String description = this.getInput("Description");
+
+        Message message = this.controller.handleAddProduct(name, price, description);
+        System.out.println(message == Message.SUCCESS ? "Product Created Successfully !" : message);
+        this.run();
     }
 
     private void printAllProducts() {
-        for (Sellable product : Product.getAllItems()) {
-            System.out.println(product);
+        for (Sellable sellable : Sellable.getAllItems()) {
+            System.out.println(sellable);
         }
+        this.run();
     }
 
 }

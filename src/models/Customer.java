@@ -4,38 +4,32 @@ import java.util.ArrayList;
 
 public class Customer extends User {
 
-    private final static ArrayList<Customer> ALL_CUSTOMERS = new ArrayList<>();
-    private final ArrayList<String> accountNumbers;
-    private int accountCredit;
+    private int balance;
+    private final ArrayList<Sellable> purchasedSellables;
 
     public Customer(String username, String password) {
         super(username, password);
-        this.accountNumbers = new ArrayList<>();
-        this.accountCredit = 0;
-        Customer.ALL_CUSTOMERS.add(this);
+        this.purchasedSellables = new ArrayList<>();
+        this.balance = 0;
     }
 
-    public static ArrayList<Customer> getAllCustomers() {
-        return Customer.ALL_CUSTOMERS;
+    public int getBalance() {
+        return this.balance;
     }
 
-    public ArrayList<String> getAccountNumbers() {
-        return accountNumbers;
+    public void setBalance(int amount) {
+        this.balance = amount;
     }
 
-    public static Customer getCustomerByUsername(String username) {
-        for (Customer customer : Customer.ALL_CUSTOMERS) {
-            if (customer.getUsername().equals(username))
-                return customer;
-        }
-        return null;
+    public void increaseBalance(int amount) {
+        this.setBalance(this.getBalance() + amount);
     }
 
-    public int getAccountCredit() {
-        return accountCredit;
+    public void decreaseBalance(int amount) {
+        this.setBalance(this.getBalance() - amount);
     }
 
-    public void setAccountCredit(int accountCredit) {
-        this.accountCredit = accountCredit;
+    public void addPurchasedSellables(Sellable sellable) {
+        this.purchasedSellables.add(sellable);
     }
 }

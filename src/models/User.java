@@ -3,24 +3,26 @@ package models;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class User {
     private final static ArrayList<User> ALL_USERS = new ArrayList<>();
     private static int id = 0;
 
-    private String username;
-    private String password;
     private final int userId;
     private final String creationTime;
+    private final HashMap<String, ArrayList<String>> chats;
+    private String username;
+    private String password;
 
     public User(String username, String password) {
-        id++;
-        this.userId = id;
+        this.userId = ++id;
         this.username = username;
         this.password = password;
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd | HH:mm:ss");
         this.creationTime = now.format(formatter);
+        this.chats = new HashMap<>();
 
         User.ALL_USERS.add(this);
     }

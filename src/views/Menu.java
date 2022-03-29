@@ -9,22 +9,17 @@ public abstract class Menu {
     private static User loggedInUser = null;
 
     protected final String menuName;
-    protected Menu lastMenu;
 
-    public Menu(String name) {
+    protected Menu(String name) {
         this.menuName = name;
     }
 
     public abstract void run(); // All children should implement this method.
 
-    protected abstract void showOptions();
+    protected abstract void showOptions(); // All children should implement this method.
 
     protected static Scanner getScanner() {
         return Menu.SCANNER;
-    }
-
-    public void setLastMenu(Menu lastMenu) {
-        this.lastMenu = lastMenu;
     }
 
     public String getMenuName() {
@@ -36,11 +31,16 @@ public abstract class Menu {
     }
 
     public static User getLoggedInUser() {
-        return loggedInUser;
+        return Menu.loggedInUser;
     }
 
-    public Menu getLastMenu() {
-        return lastMenu;
+    protected String getInput(String message) {
+        System.out.println(message + ":");
+        return Menu.getScanner().nextLine().trim();
+    }
+
+    protected String getChoice() {
+        return Menu.getScanner().nextLine().trim().toLowerCase();
     }
 
 }

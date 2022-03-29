@@ -1,6 +1,7 @@
 package controllers;
 
-import enums.ACCESS;
+import enums.Message;
+import enums.Role;
 import models.Admin;
 import models.Customer;
 import models.User;
@@ -23,68 +24,65 @@ public class LoginController {
         return LoginController.instance;
     }
 
-    public String canRegister(String username, String password, String repeatPassword) {
-        if (isCustomerFound(username))
-            return "repeated username";
-        String error = validatePassword(password, repeatPassword);
-        if (!error.equals("OK"))
-            return error;
-        Customer customer = new Customer(username, password);
-        return "done";
-    }
-
-    public String createAdmin(String username, String password, String repeatPassword, String accessLevel) {
-        if (isCustomerFound(username))
-            return "repeated username";
-        String error = validatePassword(password, repeatPassword);
-        if (!error.equals("OK"))
-            return error;
-        ACCESS accessModifier;
-        if (accessLevel.equalsIgnoreCase("ceo"))
-            accessModifier = ACCESS.CEO;
-        else if (accessLevel.equalsIgnoreCase("manager"))
-            accessModifier = ACCESS.MANAGER;
-        else if (accessLevel.equalsIgnoreCase("accountant"))
-            accessModifier = ACCESS.ACCOUNTANT;
-        else if (accessLevel.equalsIgnoreCase("simple"))
-            accessModifier = ACCESS.SIMPLE;
-        else {
-            return "wrong access level";
-        }
-        Admin admin = new Admin(username, password, accessModifier);
-        return "done";
-    }
-
-    public String login(String username, String password) {
+    public Message handleLogin(String username, String password) {
         User user = User.getUserByUsername(username);
         if (user != null && user.getPassword().equals(password)) {
             Menu.setLoggedInUser(user);
-            return "done";
+            return Message.SUCCESS;
         }
-        return "Wrong Credentials !";
+        return Message.WRONG_CREDENTIALS;
     }
 
-    private String validatePassword(String password, String repeated) {
-        if (!password.equals(repeated))
-            return "passwords doesn't match";
+    private Message validatePassword(String password, String repeatedPassword) {
+        if (!password.equals(repeatedPassword))
+            return Message.MISMATCH_PASSWORD;
         if (password.length() < 5)
-            return "password too short";
+            return Message.SHORT_PASSWORD;
         if (password.length() > 20)
-            return "password too long";
+            return Message.LONG_PASSWORD;
         if (!isAlphaNumeric(password))
-            return "password should contain alphaNumeric Characters";
-        return "OK";
+            return Message.NON_ALPHANUMERIC_PASSWORD;
+        return Message.SUCCESS;
     }
 
     private Boolean isAlphaNumeric(String string) {
         return string.matches("[a-zA-Z0-9]+");
     }
 
-    private Boolean isCustomerFound(String username) {
-        for (Customer customer : Customer.getAllCustomers()) {
-            if (customer.getUsername().equals(username))
-                return true;
-        }
-        return false;
+    private Boolean doesUsernameExist(String username) {
+        return User.getUserByUsername(username) != null;
     }
+
+    public Message handleCreateCustomer(String username, String password, String repeatedPassword) {
+        if (this.doesUsernameExist(username)) {
+            return Message.USERNAME_EXIST;
+        }
+        Message message;
+        if ((message = this.validatePassword(password, repeatedPassword)) != Message.SUCCESS) {
+            return message;
+        }
+        new Customer(username, password);
+        return Message.SUCCESS;
+    }
+
+    public Message handleCreateAdmin(String username, String password, String repeatedPassword, String role) {
+        if (this.doesUsernameExist(username)) {
+            return Message.USERNAME_EXIST;
+        }
+
+        Message message;
+        if ((message = this.validatePassword(password, repeatedPassword)) != Message.SUCCESS) {
+            return message;
+        }
+
+        Role adminRole = Role.getRoleFromString(role);
+        if (adminRole == null) {
+            return Message.WRONG_ROLE_LEVEL;
+        }
+        new Admin(username, password, adminRole);
+
+        return Message.SUCCESS;
+
+    }
+
 }

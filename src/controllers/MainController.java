@@ -1,7 +1,10 @@
 package controllers;
 
+import enums.Message;
+import models.Customer;
 import models.Product;
 import models.Sellable;
+import models.User;
 
 public class MainController {
     private static MainController instance = null;
@@ -20,15 +23,34 @@ public class MainController {
         return MainController.instance;
     }
 
-    public String createProduct(String name, float price) {
-        for (Sellable product : Product.getAllItems()) {
-            if (product.getName().equals(name))
-                return "This name already exists";
+    public Message handleAddProduct(String name, int price, String description) {
+        for (Sellable sellable : Sellable.getAllItems()) {
+            if (sellable instanceof Product && sellable.getName().equals(name) && sellable.getPrice() == price
+                    && ((Product) sellable).getDescription().equals(description)) {
+                return Message.PRODUCT_EXIST;
+            }
         }
-        if (price <= 0) {
-            return "Invalid price";
+
+        new Product(name, price, description);
+
+        return Message.SUCCESS;
+    }
+
+    public Message handleBuyProduct(Customer loggedInUser, int sellableId) {
+        Sellable item = Sellable.getSellableById(sellableId);
+        if (item == null) {
+            return Message.SELLABLE_NOT_EXIST;
         }
-        Product product = new Product(name, price);
-        return Product.getSellableByName(name).toString();
+        if (loggedInUser.getBalance() < item.getPrice()) {
+            return Message.NOT_ENOUGH_MONEY;
+        }
+        loggedInUser.decreaseBalance(item.getPrice());
+        loggedInUser.addPurchasedSellables(item);
+        return Message.SUCCESS;
+    }
+
+    public Message handleIncreaseBalance(Customer customer, int amount) {
+        customer.increaseBalance(amount);
+        return Message.SUCCESS;
     }
 }

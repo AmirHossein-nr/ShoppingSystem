@@ -3,55 +3,48 @@ package models;
 import java.util.ArrayList;
 
 public abstract class Sellable {
-    private static int idCounter;
-    private static ArrayList<Sellable> allItems;
-    private int id;
+    private static int idCounter = 0;
+    private final static ArrayList<Sellable> ALL_ITEMS = new ArrayList<>();
+
+    private final int id;
+    private final ArrayList<Comment> comments;
     private String name;
-    private float price;
-    private ArrayList<Comment> comments;
+    private int price;
 
-    static {
-        idCounter = 0;
-        allItems = new ArrayList<>();
-    }
+    // static {
+    // idCounter = 0;
+    // allItems = new ArrayList<>();
+    // }
 
-    public Sellable() {
-        comments = new ArrayList<>();
-        idCounter++;
-        this.id = idCounter;
-        allItems.add(this);
-    }
-
-    public static int getIdCounter() {
-        return idCounter;
+    public Sellable(String name, int price) {
+        this.comments = new ArrayList<>();
+        this.id = ++idCounter;
+        this.name = name;
+        this.price = price;
+        Sellable.ALL_ITEMS.add(this);
     }
 
     public static ArrayList<Sellable> getAllItems() {
-        return allItems;
-    }
-
-    public static void setAllItems(ArrayList<Sellable> allItems) {
-        Sellable.allItems = allItems;
+        return Sellable.ALL_ITEMS;
     }
 
     public int getId() {
-        return id;
+        return this.id;
     }
 
-
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public float getPrice() {
-        return price;
+    public int getPrice() {
+        return this.price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 
@@ -59,19 +52,16 @@ public abstract class Sellable {
         return comments;
     }
 
-    public void setComments(ArrayList<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public static Sellable getSellableByName(String name) {
-        for (Sellable sellable : allItems) {
-            if (sellable.getName().equals(name)) return sellable;
+    public static Sellable getSellableById(int id) {
+        for (Sellable sellable : Sellable.ALL_ITEMS) {
+            if (sellable.getId() == id)
+                return sellable;
         }
         return null;
     }
 
     @Override
     public String toString() {
-        return "name: " + this.getName() + " | price: " + this.getPrice() + " | id: " + this.getId();
+        return "id: " + this.getId() + "| name: " + this.getName() + " | price: " + this.getPrice();
     }
 }
