@@ -1,5 +1,7 @@
 package views;
 
+import java.util.Collections;
+
 import controllers.MainController;
 import enums.Message;
 import models.Admin;
@@ -135,6 +137,7 @@ public class MainMenu extends Menu {
     }
 
     private void printAllProducts() {
+        Collections.sort(Sellable.getAllItems());
         for (Sellable sellable : Sellable.getAllItems()) {
             System.out.println(sellable);
         }

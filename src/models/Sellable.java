@@ -2,7 +2,7 @@ package models;
 
 import java.util.ArrayList;
 
-public abstract class Sellable {
+public abstract class Sellable implements Comparable<Sellable> {
     private static int idCounter = 0;
     private final static ArrayList<Sellable> ALL_ITEMS = new ArrayList<>();
 
@@ -58,6 +58,20 @@ public abstract class Sellable {
                 return sellable;
         }
         return null;
+    }
+
+    @Override
+    public int compareTo(Sellable obj) {
+        if (!this.name.equals(obj.name)) {
+            return this.name.compareTo(obj.name);
+        }
+        if (this.price > obj.price) {
+            return 1;
+        }
+        if (this.price < obj.price) {
+            return -1;
+        }
+        return 0;
     }
 
     @Override
